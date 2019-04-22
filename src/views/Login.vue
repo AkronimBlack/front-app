@@ -8,14 +8,14 @@
                     </v-toolbar>
                     <v-card-text>
                         <v-form>
-                            <v-text-field prepend-icon="person" name="login" label="Login" type="text"></v-text-field>
-                            <v-text-field prepend-icon="lock" name="password" label="Password" id="password"
+                            <v-text-field prepend-icon="person" name="login" label="Login" type="text" v-model="email" ></v-text-field>
+                            <v-text-field prepend-icon="lock" name="password" label="Password" id="password" v-model="password"
                                           type="password"></v-text-field>
                         </v-form>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary">Login</v-btn>
+                        <v-btn color="primary" @click="handleSubmit">Login</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-flex>
@@ -41,6 +41,9 @@
                 'authenticationErrorCode'
             ])
         },
+        props:{
+
+        },
         methods: {
             ...mapActions([
                 'login'
@@ -48,7 +51,7 @@
             handleSubmit() {
                 // Perform a simple validation that email and password have been typed in
                 if (this.email != '' && this.password != '') {
-                    this.login({email: this.email, password: this.password})
+                    this.login({email: this.email, password: this.password , url: 'http://localhost:8100/api/user/token/create'})
                     this.password = ""
                 }
             }

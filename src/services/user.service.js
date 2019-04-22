@@ -18,10 +18,10 @@ const UserService = {
      * @returns access_token
      * @throws AuthenticationError
      **/
-    login: async function(email, password) {
+    login: async function(email, password , url) {
         const requestData = {
             method: 'post',
-            url: "/o/token/",
+            url: url,
             data: {
                 grant_type: 'password',
                 username: email,

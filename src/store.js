@@ -36,11 +36,11 @@ const store =  new Vuex.Store({
     }
   },
   actions: {
-    async login({ commit }, {email, password}) {
+    async login({ commit }, {email, password , url}) {
       commit('loginRequest');
 
       try {
-        const token = await UserService.login(email, password);
+        const token = await UserService.login(email, password , url);
         commit('loginSuccess', token)
 
         // Redirect the user to the page he first tried to visit or to the home view
