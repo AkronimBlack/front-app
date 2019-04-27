@@ -11,7 +11,6 @@
                         <v-card-title>
                             <span class="headline">{{ createNewRole }}</span>
                         </v-card-title>
-
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-layout wrap>
@@ -42,10 +41,25 @@
                     item-key="name"
             >
                 <template v-slot:items="props">
-                    <!--<tr @click="props.expanded = !props.expanded">-->
                     <tr @click="props.expanded = getRolePermissions(props.item.designation , props.expanded)">
+                        <td class="text-xs-justify">{{ props.item.id }}</td>
                         <td class="text-xs-justify">{{ props.item.name }}</td>
                         <td class="text-xs-justify">{{ props.item.designation }}</td>
+                        <td class="text-xs-justify">
+                            <v-icon
+                                    small
+                                    class="mr-2"
+                                    @click="editItem(props.item)"
+                            >
+                                edit
+                            </v-icon>
+                            <v-icon
+                                    small
+                                    @click="deleteItem(props.item)"
+                            >
+                                delete
+                            </v-icon>
+                        </td>
                     </tr>
                 </template>
                 <template v-slot:expand="expand">
@@ -83,11 +97,14 @@
                     designation: ''
                 },
                 headers: [
+                    {text: 'Id' , value: 'id'},
                     {text: 'Name', value: 'name'},
-                    {text: 'Designation', value: 'designation'}
+                    {text: 'Designation', value: 'designation'},
+                    {text: 'Action'}
                 ],
                 roles: [
                     {
+                        id: '',
                         name: '',
                         designation: '',
                     }
@@ -108,13 +125,10 @@
         },
         methods: {
             getRolePermissions: function (designation, expended) {
-
                 if (expended) {
                     return false;
                 }
-
                 ApiService.get('http://localhost:8101/api/role/permissions?roleDesignation=' + designation).then(response => (this.rolePermissions = response.data));
-
                 return true;
             },
             saveRole: function () {
@@ -128,7 +142,16 @@
             },
             loadRoles: function () {
                 ApiService.get('http://localhost:8101/api/roles').then(response => (this.roles = response.data));
-            }
+            },
+            editItem (item) {
+
+            },
+
+            deleteItem (item) {
+                confirm('Are you sure you want to delete this item?') &&
+                        ApiService.delete('http://localhost:8101/api/role?id=' + item.id).then(response =>(this.loadRoles()));
+            },
+
         },
         created() {
             this.loadRoles();
