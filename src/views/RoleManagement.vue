@@ -4,9 +4,9 @@
         <v-container>
             <v-container>
                 <v-dialog v-model="dialog">
-                        <template v-slot:activator="{ on }">
-                            <v-btn color="primary" dark class="mb-2" v-on="on">New Role</v-btn>
-                        </template>
+                    <template v-slot:activator="{ on }">
+                        <v-btn color="primary" dark class="mb-2" v-on="on">New Role</v-btn>
+                    </template>
                     <v-card>
                         <v-card-title>
                             <span class="headline">{{ createNewRole }}</span>
@@ -19,7 +19,8 @@
                                         <v-text-field v-model="newRole.name" label="Role name"></v-text-field>
                                     </v-flex>
                                     <v-flex xs12 sm6 md4>
-                                        <v-text-field v-model="newRole.designation" label="Role Designation"></v-text-field>
+                                        <v-text-field v-model="newRole.designation"
+                                                      label="Role Designation"></v-text-field>
                                     </v-flex>
                                 </v-layout>
                             </v-container>
@@ -27,8 +28,8 @@
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" flat >Cancel</v-btn>
-                            <v-btn color="blue darken-1" flat >Save</v-btn>
+                            <v-btn color="blue darken-1" flat @click="createRoleCancel">Cancel</v-btn>
+                            <v-btn color="blue darken-1" flat @click="saveRole">Save</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -42,7 +43,7 @@
             >
                 <template v-slot:items="props">
                     <!--<tr @click="props.expanded = !props.expanded">-->
-                    <tr @click="props.expanded = getRolePermissions(props.item.designation)">
+                    <tr @click="props.expanded = getRolePermissions(props.item.designation , props.expanded)">
                         <td class="text-xs-justify">{{ props.item.name }}</td>
                         <td class="text-xs-justify">{{ props.item.designation }}</td>
                     </tr>
@@ -78,8 +79,8 @@
                 dialog: false,
                 createNewRole: 'Create New Role',
                 newRole: {
-                  name: 'Role name',
-                  designation: 'Role Designation'
+                    name: '',
+                    designation: ''
                 },
                 headers: [
                     {text: 'Name', value: 'name'},
@@ -106,14 +107,31 @@
             }
         },
         methods: {
-            getRolePermissions: function (designation) {
+            getRolePermissions: function (designation, expended) {
+
+                if (expended) {
+                    return false;
+                }
+
                 ApiService.get('http://localhost:8101/api/role/permissions?roleDesignation=' + designation).then(response => (this.rolePermissions = response.data));
 
                 return true;
+            },
+            saveRole: function () {
+                ApiService.post('http://localhost:8101/api/role', this.newRole).then(response => (this.loadRoles()));
+                this.dialog = false;
+            },
+            createRoleCancel: function () {
+                this.newRole.name = '';
+                this.newRole.designation = '';
+                this.dialog = false;
+            },
+            loadRoles: function () {
+                ApiService.get('http://localhost:8101/api/roles').then(response => (this.roles = response.data));
             }
         },
         created() {
-            ApiService.get('http://localhost:8101/api/roles').then(response => (this.roles = response.data));
+            this.loadRoles();
         }
     }
 </script>
