@@ -9,6 +9,18 @@ Vue.use(Router);
 const router = new Router({
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      meta:{
+        public: true,
+        onlyWhenLoggedOut: true
+      },
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './views/Login.vue')
+    },
+    {
       path: '/',
       name: 'dashboard',
       component: Dashboard
@@ -25,24 +37,28 @@ const router = new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Help.vue')
     },
     {
-      path: '/login',
-      name: 'login',
-      meta:{
-        public: true,
-        onlyWhenLoggedOut: true
-      },
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Login.vue')
-    },
-    {
       path: '/calender',
       name: 'calender',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/Calender.vue')
+    },
+    {
+      path: '/roles',
+      name: 'roles',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './views/RoleManagement.vue')
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './views/Settings.vue')
     }
   ]
 });

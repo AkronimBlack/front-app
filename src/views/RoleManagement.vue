@@ -1,14 +1,14 @@
 <template>
     <v-container fluid fill-height>
         <v-layout justify-center align-center>
-            Settings
+            Roles
         </v-layout>
     </v-container>
 </template>
 
 <script>
     export default {
-        name: "Settings"
+        name: "RoleManagement"
     }
 </script>
 

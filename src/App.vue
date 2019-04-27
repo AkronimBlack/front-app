@@ -177,9 +177,11 @@
             dialog: false,
             drawer: null,
             items: [
-                {icon: 'contacts', text: 'Contacts', link: '/contacts'},
+                {icon: 'dashboard', text: 'Dashboard', link: '/'},
+                // {icon: 'contacts', text: 'Contacts', link: '/contacts'},
                 {icon: 'help', text: 'Calender', link: '/calender'},
                 {icon: 'settings', text: 'Settings', link: '/settings'},
+                {icon: 'desktop_access_disabled', text: 'Roles', link: '/roles'},
                 {icon: 'help', text: 'Help', link: '/help'},
             ]
         }),
