@@ -25,26 +25,26 @@ const UserService = {
             data: {
                 grant_type: 'password',
                 username: email,
-                password: password
+                password: password,
+                audience: "reporting",
+                requestData: JSON.stringify(["USER_ROLE", "USER_USERNAME"])
             },
-            auth: {
-                username: process.env.VUE_APP_CLIENT_ID,
-                password: process.env.VUE_APP_CLIENT_SECRET
-            }
+            // auth: {
+            //     username: process.env.VUE_APP_CLIENT_ID,
+            //     password: process.env.VUE_APP_CLIENT_SECRET
+            // }
         }
 
         try {
             const response = await ApiService.customRequest(requestData)
 
-            TokenService.saveToken(response.data.access_token)
-            TokenService.saveRefreshToken(response.data.refresh_token)
+            TokenService.saveToken(response.data.token)
+            // TokenService.saveRefreshToken(response.data.refresh_token)
             ApiService.setHeader()
 
-            // NOTE: We haven't covered this yet in our ApiService
-            //       but don't worry about this just yet - I'll come back to it later
             ApiService.mount401Interceptor();
 
-            return response.data.access_token
+            return response.data.token
         } catch (error) {
             throw new AuthenticationError(error.response.status, error.response.data.detail)
         }
