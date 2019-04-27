@@ -41,26 +41,29 @@
                     item-key="name"
             >
                 <template v-slot:items="props">
-                    <tr @click="props.expanded = getRolePermissions(props.item.designation , props.expanded)">
                         <td class="text-xs-justify">{{ props.item.id }}</td>
                         <td class="text-xs-justify">{{ props.item.name }}</td>
                         <td class="text-xs-justify">{{ props.item.designation }}</td>
+
                         <td class="text-xs-justify">
                             <v-icon
-                                    small
+                                    class="mr-2"
+                                    @click="props.expanded = getRolePermissions(props.item.designation , props.expanded)"
+                            >
+                                more_vert
+                            </v-icon>
+                            <v-icon
                                     class="mr-2"
                                     @click="editItem(props.item)"
                             >
                                 edit
                             </v-icon>
                             <v-icon
-                                    small
                                     @click="deleteItem(props.item)"
                             >
                                 delete
                             </v-icon>
                         </td>
-                    </tr>
                 </template>
                 <template v-slot:expand="expand">
                     <v-container fluid fill-height>
@@ -97,7 +100,7 @@
                     designation: ''
                 },
                 headers: [
-                    {text: 'Id' , value: 'id'},
+                    {text: 'Id', value: 'id'},
                     {text: 'Name', value: 'name'},
                     {text: 'Designation', value: 'designation'},
                     {text: 'Action'}
@@ -143,13 +146,13 @@
             loadRoles: function () {
                 ApiService.get('http://localhost:8101/api/roles').then(response => (this.roles = response.data));
             },
-            editItem (item) {
+            editItem(item) {
 
             },
 
-            deleteItem (item) {
+            deleteItem(item) {
                 confirm('Are you sure you want to delete this item?') &&
-                        ApiService.delete('http://localhost:8101/api/role?id=' + item.id).then(response =>(this.loadRoles()));
+                ApiService.delete('http://localhost:8101/api/role?id=' + item.id).then(response => (this.loadRoles()));
             },
 
         },
