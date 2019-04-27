@@ -95,7 +95,6 @@ const UserService = {
         TokenService.removeRefreshToken()
         ApiService.removeHeader()
 
-        // NOTE: Again, we'll cover the 401 Interceptor a bit later.
         ApiService.unmount401Interceptor()
     }
 }

@@ -178,6 +178,7 @@
             drawer: null,
             items: [
                 {icon: 'contacts', text: 'Contacts', link: '/contacts'},
+                {icon: 'help', text: 'Calender', link: '/calender'},
                 {icon: 'settings', text: 'Settings', link: '/settings'},
                 {icon: 'help', text: 'Help', link: '/help'},
             ]
