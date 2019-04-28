@@ -7,7 +7,7 @@
                 app
         >
             <v-list dense>
-                <template v-for="item in items">
+                <template v-for="item in navItems">
                     <v-layout
                             v-if="item.heading"
                             :key="item.heading"
@@ -88,6 +88,22 @@
             <v-btn icon>
                 <v-icon>notifications</v-icon>
             </v-btn>
+            <v-menu offset-y>
+                <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                        <v-icon>person</v-icon>
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-tile
+                            v-for="(item, index) in userItems"
+                            :key="index"
+                            @click="logout"
+                    >
+                        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
         </v-toolbar>
 
 
@@ -172,19 +188,29 @@
 </template>
 
 <script>
+    import {mapActions} from "vuex";
+
     export default {
         data: () => ({
             dialog: false,
             drawer: null,
-            items: [
+            navItems: [
                 {icon: 'dashboard', text: 'Dashboard', link: '/'},
                 // {icon: 'contacts', text: 'Contacts', link: '/contacts'},
                 {icon: 'help', text: 'Calender', link: '/calender'},
                 {icon: 'settings', text: 'Settings', link: '/settings'},
                 {icon: 'desktop_access_disabled', text: 'Roles', link: '/roles'},
                 {icon: 'help', text: 'Help', link: '/help'},
+            ],
+            userItems: [
+                { title: 'Logout' }
             ]
         }),
-        props: {}
+        props: {},
+        methods: {
+            ...mapActions([
+                'logout'
+            ])
+        }
     }
 </script>
