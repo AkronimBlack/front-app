@@ -349,6 +349,7 @@
                 let data = {'roleId': this.editRole.id, 'permissions': this.selected};
                 ApiService.post('http://localhost:8101/api/role/permission', data);
                 this.addPermissionsDialogCancel();
+                this.loadRoles();
             }
         },
         created() {
