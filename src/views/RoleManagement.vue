@@ -324,17 +324,30 @@
                 }
             },
             openPermissionDialog(item) {
-                ApiService.get('http://localhost:8101/api/permissions').then(response => (this.permissionList = response.data));
+                ApiService.get('http://localhost:8101/api/permissions?roleId=' + item.id).then(response => (this.setPermissionsData(response.data)));
                 this.editRole.id = item.id;
                 this.addPermissionsDialog = true;
+            },
+            setPermissionsData(data) {
+                this.permissionList = data;
+                let selected = [];
+                data.forEach(function (item) {
+                        if (item.hasPermission === true) {
+                            selected.push(item);
+                        }
+                    }
+                );
+                this.selected = selected;
             },
             addPermissionsDialogCancel() {
                 this.editRole.id = '';
                 this.addPermissionsDialog = false;
+                this.selected = [];
+                this.permissionList = [];
             },
             addPermissions() {
-                let data =  {'roleId' : this.editRole.id  , 'permissions' :this.selected};
-                ApiService.post('http://localhost:8101/api/role/permission', data );
+                let data = {'roleId': this.editRole.id, 'permissions': this.selected};
+                ApiService.post('http://localhost:8101/api/role/permission', data);
                 this.addPermissionsDialogCancel();
             }
         },
