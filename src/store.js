@@ -44,6 +44,7 @@ const store =  new Vuex.Store({
 
     closeErrorDialog(state) {
       state.errorActive = false
+      state.errorMsg = ''
     }
   },
   actions: {
@@ -75,6 +76,10 @@ const store =  new Vuex.Store({
 
     handleError({ commit },{ errorMsg }){
       commit('openErrorDialog' , errorMsg)
+    },
+
+    closeErrorDialog({ commit }){
+      commit('closeErrorDialog')
     }
   },
   getters:{

@@ -22,7 +22,7 @@
                 <v-btn
                         color="primary"
                         flat
-                        @click="errorDialog = false"
+                        @click="closeErrorDialog"
                 >
                     I accept
                 </v-btn>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-    import {mapGetters} from "vuex";
+    import {mapGetters , mapActions} from "vuex";
 
     export default {
         name: "Error",
@@ -40,6 +40,11 @@
             ...mapGetters([
                 'errorActive',
                 'errorMsg'
+            ])
+        },
+        methods: {
+            ...mapActions([
+                'closeErrorDialog'
             ])
         }
     }
