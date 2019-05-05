@@ -11,7 +11,9 @@ const store =  new Vuex.Store({
     authenticating: false,
     accessToken: TokenService.getToken(),
     authenticationErrorCode: 0,
-    authenticationError: ''
+    authenticationError: '',
+    errorActive: false,
+    errorMsg: ''
   },
   mutations: {
     loginRequest(state) {
@@ -33,6 +35,15 @@ const store =  new Vuex.Store({
 
     logoutSuccess(state) {
       state.accessToken = ''
+    },
+
+    openErrorDialog(state , errorMsg) {
+      state.errorActive = true
+      state.errorMsg = errorMsg
+    },
+
+    closeErrorDialog(state) {
+      state.errorActive = false
     }
   },
   actions: {
@@ -60,6 +71,10 @@ const store =  new Vuex.Store({
       UserService.logout()
       commit('logoutSuccess')
       router.push('/login')
+    },
+
+    handleError({ commit },{ errorMsg }){
+      commit('openErrorDialog' , errorMsg)
     }
   },
   getters:{
@@ -78,6 +93,14 @@ const store =  new Vuex.Store({
 
     authenticating: (state) => {
       return state.authenticating
+    },
+
+    errorActive: (state) => {
+      return state.errorActive
+    },
+
+    errorMsg: (state) => {
+      return state.errorMsg
     }
   }
 });

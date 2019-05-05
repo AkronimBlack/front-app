@@ -280,20 +280,20 @@
                 return true;
             },
             saveRole: function () {
-                ApiService.post('http://localhost:8101/api/role', this.newRole).then(response => (this.loadRoles()));
-                this.dialog = false;
+                ApiService.post('http://localhost:8101/api/role', this.newRole).then(this.loadRoles());
+                this.newDialog = false;
             },
             createRoleCancel: function () {
                 this.newRole.name = '';
                 this.newRole.designation = '';
-                this.dialog = false;
+                this.newDialog = false;
             },
             loadRoles: function () {
                 ApiService.get('http://localhost:8101/api/roles').then(response => (this.roles = response.data));
             },
             deleteItem(item) {
                 confirm('Are you sure you want to delete this item?') &&
-                ApiService.delete('http://localhost:8101/api/role?id=' + item.id).then(response => (this.loadRoles()));
+                ApiService.delete('http://localhost:8101/api/role?id=' + item.id).then(this.loadRoles());
             },
             openEditDialog(item) {
                 this.editRole.id = item.id;
@@ -308,7 +308,7 @@
                 this.editDialog = false;
             },
             editItem() {
-                ApiService.put('http://localhost:8101/api/role', this.editRole).then(response => (this.loadRoles()));
+                ApiService.put('http://localhost:8101/api/role', this.editRole).then(this.loadRoles());
                 this.editDialog = false;
             },
             toggleAll() {

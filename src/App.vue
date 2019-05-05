@@ -108,6 +108,7 @@
 
 
         <v-content>
+            <Error></Error>
             <router-view></router-view>
         </v-content>
         <v-btn
@@ -189,8 +190,10 @@
 
 <script>
     import {mapActions} from "vuex";
+    import Error from "./components/Error";
 
     export default {
+        components: {Error},
         data: () => ({
             dialog: false,
             drawer: null,
