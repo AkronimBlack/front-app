@@ -105,7 +105,7 @@ const store =  new Vuex.Store({
     },
 
     errorMsg: (state) => {
-      return state.errorMsg
+      return state.errorMsg.message
     }
   }
 });
