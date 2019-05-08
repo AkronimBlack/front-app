@@ -1,209 +1,38 @@
 <template>
-    <v-container fluid fill-height>
+    <v-container>
+        <v-container>
+            <v-dialog v-model="newDialog">
+                <template v-slot:activator="{ on }">
+                    <v-btn color="primary" dark class="mb-2" v-on="on">New Role</v-btn>
+                </template>
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Create new role</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container grid-list-md>
+                            <v-layout wrap>
+                                <v-flex xs12 sm6 md4>
+                                    <v-text-field v-model="newRole.name" label="Role name"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12 sm6 md4>
+                                    <v-text-field v-model="newRole.designation"
+                                                  label="Role Designation"></v-text-field>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" flat @click="createRoleCancel">Cancel</v-btn>
+                        <v-btn color="blue darken-1" flat @click="saveRole">Save</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-container>
 
         <v-container>
-            <v-container>
-                <v-dialog v-model="newDialog">
-                    <template v-slot:activator="{ on }">
-                        <v-btn color="primary" dark class="mb-2" v-on="on">New Role</v-btn>
-                    </template>
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">Create new role</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <v-container grid-list-md>
-                                <v-layout wrap>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field v-model="newRole.name" label="Role name"></v-text-field>
-                                    </v-flex>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field v-model="newRole.designation"
-                                                      label="Role Designation"></v-text-field>
-                                    </v-flex>
-                                </v-layout>
-                            </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" flat @click="createRoleCancel">Cancel</v-btn>
-                            <v-btn color="blue darken-1" flat @click="saveRole">Save</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-container>
-
-            <v-container>
-                <v-dialog v-model="editDialog">
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">Edit role</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <v-container grid-list-md>
-                                <v-layout wrap>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field v-model="editRole.id" label="Role name" readonly></v-text-field>
-                                    </v-flex>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field v-model="editRole.name" label="Role name"></v-text-field>
-                                    </v-flex>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field v-model="editRole.designation"
-                                                      label="Role Designation"></v-text-field>
-                                    </v-flex>
-                                </v-layout>
-                            </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" flat @click="editRoleCancel">Cancel</v-btn>
-                            <v-btn color="blue darken-1" flat @click="editItem">Save</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-container>
-
-            <v-container>
-                <v-dialog v-model="extendDialog">
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">Extend role</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <v-container grid-list-md>
-                                <v-layout wrap>
-                                    <v-data-table
-                                            v-model="selectedRoles"
-                                            :headers="extendableRolesHeaders"
-                                            :items="extendableRoles"
-                                            :pagination.sync="pagination"
-                                            select-all
-                                            item-key="name"
-                                            class="elevation-1"
-                                    >
-                                        <template v-slot:headers="props">
-                                            <tr>
-                                                <th>
-                                                    <v-checkbox
-                                                            :input-value="props.all"
-                                                            :indeterminate="props.indeterminate"
-                                                            primary
-                                                            hide-details
-                                                            @click.stop="toggleAll"
-                                                    ></v-checkbox>
-                                                </th>
-                                                <th
-                                                        v-for="header in props.headers"
-                                                        :key="header.text"
-                                                        :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                                                        @click="changeSort(header.value)"
-                                                >
-                                                    <v-icon small>arrow_upward</v-icon>
-                                                    {{ header.text }}
-                                                </th>
-                                            </tr>
-                                        </template>
-                                        <template v-slot:items="props">
-                                            <tr :active="props.selected" @click="props.selected = !props.selected">
-                                                <td>
-                                                    <v-checkbox
-                                                            :input-value="props.selected"
-                                                            primary
-                                                            hide-details
-                                                    ></v-checkbox>
-                                                </td>
-                                                <td>{{ props.item.name }}</td>
-                                                <td class="text-xs-center">{{ props.item.route }}</td>
-                                                <td class="text-xs-center">{{ props.item.type }}</td>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
-                                </v-layout>
-                            </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" flat @click="extendRoleCancel">Cancel</v-btn>
-                            <v-btn color="blue darken-1" flat @click="editItem">Save</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-container>
-
-            <v-container>
-                <v-dialog v-model="addPermissionsDialog">
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">Create new role</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <v-container grid-list-md>
-                                <v-layout wrap>
-                                    <v-data-table
-                                            v-model="selected"
-                                            :headers="permissionListHeaders"
-                                            :items="permissionList"
-                                            :pagination.sync="pagination"
-                                            select-all
-                                            item-key="name"
-                                            class="elevation-1"
-                                    >
-                                        <template v-slot:headers="props">
-                                            <tr>
-                                                <th>
-                                                    <v-checkbox
-                                                            :input-value="props.all"
-                                                            :indeterminate="props.indeterminate"
-                                                            primary
-                                                            hide-details
-                                                            @click.stop="toggleAll"
-                                                    ></v-checkbox>
-                                                </th>
-                                                <th
-                                                        v-for="header in props.headers"
-                                                        :key="header.text"
-                                                        :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                                                        @click="changeSort(header.value)"
-                                                >
-                                                    <v-icon small>arrow_upward</v-icon>
-                                                    {{ header.text }}
-                                                </th>
-                                            </tr>
-                                        </template>
-                                        <template v-slot:items="props">
-                                            <tr :active="props.selected" @click="props.selected = !props.selected">
-                                                <td>
-                                                    <v-checkbox
-                                                            :input-value="props.selected"
-                                                            primary
-                                                            hide-details
-                                                    ></v-checkbox>
-                                                </td>
-                                                <td>{{ props.item.name }}</td>
-                                                <td class="text-xs-center">{{ props.item.route }}</td>
-                                                <td class="text-xs-center">{{ props.item.type }}</td>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
-
-                                </v-layout>
-                            </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" flat @click="addPermissionsDialogCancel">Cancel</v-btn>
-                            <v-btn color="blue darken-1" flat @click="addPermissions">Save</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-container>
-
-
             <v-data-table
                     :headers="headers"
                     :items="roles"
@@ -266,6 +95,176 @@
                 </template>
             </v-data-table>
         </v-container>
+
+        <v-container>
+            <v-dialog v-model="editDialog">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Edit role</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container grid-list-md>
+                            <v-layout wrap>
+                                <v-flex xs12 sm6 md4>
+                                    <v-text-field v-model="editRole.id" label="Role name" readonly></v-text-field>
+                                </v-flex>
+                                <v-flex xs12 sm6 md4>
+                                    <v-text-field v-model="editRole.name" label="Role name"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12 sm6 md4>
+                                    <v-text-field v-model="editRole.designation"
+                                                  label="Role Designation"></v-text-field>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" flat @click="editRoleCancel">Cancel</v-btn>
+                        <v-btn color="blue darken-1" flat @click="editItem">Save</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-container>
+
+        <v-container>
+            <v-dialog v-model="extendDialog">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Extend role</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container grid-list-md>
+                            <v-layout wrap>
+                                <v-data-table
+                                        v-model="selectedRoles"
+                                        :headers="extendableRolesHeaders"
+                                        :items="extendableRoles"
+                                        :pagination.sync="pagination"
+                                        select-all
+                                        item-key="name"
+                                        class="elevation-1"
+                                >
+                                    <template v-slot:headers="props">
+                                        <tr>
+                                            <th>
+                                                <v-checkbox
+                                                        :input-value="props.all"
+                                                        :indeterminate="props.indeterminate"
+                                                        primary
+                                                        hide-details
+                                                        @click.stop="toggleAll"
+                                                ></v-checkbox>
+                                            </th>
+                                            <th
+                                                    v-for="header in props.headers"
+                                                    :key="header.text"
+                                                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                                    @click="changeSort(header.value)"
+                                            >
+                                                <v-icon small>arrow_upward</v-icon>
+                                                {{ header.text }}
+                                            </th>
+                                        </tr>
+                                    </template>
+                                    <template v-slot:items="props">
+                                        <tr :active="props.selected" @click="props.selected = !props.selected">
+                                            <td>
+                                                <v-checkbox
+                                                        :input-value="props.selected"
+                                                        primary
+                                                        hide-details
+                                                ></v-checkbox>
+                                            </td>
+                                            <td>{{ props.item.name }}</td>
+                                            <td class="text-xs-center">{{ props.item.route }}</td>
+                                            <td class="text-xs-center">{{ props.item.type }}</td>
+                                        </tr>
+                                    </template>
+                                </v-data-table>
+                            </v-layout>
+                        </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" flat @click="extendRoleCancel">Cancel</v-btn>
+                        <v-btn color="blue darken-1" flat @click="editItem">Save</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-container>
+
+        <v-container>
+            <v-dialog v-model="addPermissionsDialog">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Create new role</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container grid-list-md>
+                            <v-layout wrap>
+                                <v-data-table
+                                        v-model="selected"
+                                        :headers="permissionListHeaders"
+                                        :items="permissionList"
+                                        :pagination.sync="pagination"
+                                        select-all
+                                        item-key="name"
+                                        class="elevation-1"
+                                >
+                                    <template v-slot:headers="props">
+                                        <tr>
+                                            <th>
+                                                <v-checkbox
+                                                        :input-value="props.all"
+                                                        :indeterminate="props.indeterminate"
+                                                        primary
+                                                        hide-details
+                                                        @click.stop="toggleAll"
+                                                ></v-checkbox>
+                                            </th>
+                                            <th
+                                                    v-for="header in props.headers"
+                                                    :key="header.text"
+                                                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                                    @click="changeSort(header.value)"
+                                            >
+                                                <v-icon small>arrow_upward</v-icon>
+                                                {{ header.text }}
+                                            </th>
+                                        </tr>
+                                    </template>
+                                    <template v-slot:items="props">
+                                        <tr :active="props.selected" @click="props.selected = !props.selected">
+                                            <td>
+                                                <v-checkbox
+                                                        :input-value="props.selected"
+                                                        primary
+                                                        hide-details
+                                                ></v-checkbox>
+                                            </td>
+                                            <td>{{ props.item.name }}</td>
+                                            <td class="text-xs-center">{{ props.item.route }}</td>
+                                            <td class="text-xs-center">{{ props.item.type }}</td>
+                                        </tr>
+                                    </template>
+                                </v-data-table>
+
+                            </v-layout>
+                        </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" flat @click="addPermissionsDialogCancel">Cancel</v-btn>
+                        <v-btn color="blue darken-1" flat @click="addPermissions">Save</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-container>
+
     </v-container>
 </template>
 
