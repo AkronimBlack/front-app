@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { TokenService } from '../services/storage.service'
+import {TokenService} from '../services/storage.service'
 import store from '../store'
+
 const ApiService = {
 
     init(baseURL) {
@@ -15,8 +16,20 @@ const ApiService = {
         axios.defaults.headers.common = {}
     },
 
-    get(resource) {
-        return axios.get(resource)
+    // get(resource) {
+    //     return axios.get(resource)
+    // },
+
+    get(url) {
+        return new Promise((resolve, reject) => {
+            axios.get(url)
+                .then(response => {
+                    resolve(response);
+                })
+                .catch(error => {
+                    store.dispatch('handleError' , {errorMsg: error.response.data})
+                });
+        });
     },
 
     post(resource, data) {
@@ -46,7 +59,7 @@ const ApiService = {
                         throw error
                     } else {
                         // Refresh the access token
-                        try{
+                        try {
                             await store.dispatch('auth/refreshToken')
                             // Retry the original request
                             return this.customRequest({

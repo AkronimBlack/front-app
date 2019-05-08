@@ -67,6 +67,74 @@
             </v-container>
 
             <v-container>
+                <v-dialog v-model="extendDialog">
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Extend role</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container grid-list-md>
+                                <v-layout wrap>
+                                    <v-data-table
+                                            v-model="selectedRoles"
+                                            :headers="extendableRolesHeaders"
+                                            :items="extendableRoles"
+                                            :pagination.sync="pagination"
+                                            select-all
+                                            item-key="name"
+                                            class="elevation-1"
+                                    >
+                                        <template v-slot:headers="props">
+                                            <tr>
+                                                <th>
+                                                    <v-checkbox
+                                                            :input-value="props.all"
+                                                            :indeterminate="props.indeterminate"
+                                                            primary
+                                                            hide-details
+                                                            @click.stop="toggleAll"
+                                                    ></v-checkbox>
+                                                </th>
+                                                <th
+                                                        v-for="header in props.headers"
+                                                        :key="header.text"
+                                                        :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                                        @click="changeSort(header.value)"
+                                                >
+                                                    <v-icon small>arrow_upward</v-icon>
+                                                    {{ header.text }}
+                                                </th>
+                                            </tr>
+                                        </template>
+                                        <template v-slot:items="props">
+                                            <tr :active="props.selected" @click="props.selected = !props.selected">
+                                                <td>
+                                                    <v-checkbox
+                                                            :input-value="props.selected"
+                                                            primary
+                                                            hide-details
+                                                    ></v-checkbox>
+                                                </td>
+                                                <td>{{ props.item.name }}</td>
+                                                <td class="text-xs-center">{{ props.item.route }}</td>
+                                                <td class="text-xs-center">{{ props.item.type }}</td>
+                                            </tr>
+                                        </template>
+                                    </v-data-table>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" flat @click="extendRoleCancel">Cancel</v-btn>
+                            <v-btn color="blue darken-1" flat @click="editItem">Save</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-container>
+
+            <v-container>
                 <v-dialog v-model="addPermissionsDialog">
                     <v-card>
                         <v-card-title>
@@ -173,6 +241,12 @@
                         >
                             add_box
                         </v-icon>
+                        <v-icon
+                                class="mr-2"
+                                @click="openExtendDialog(props.item)"
+                        >
+                            extension
+                        </v-icon>
                     </td>
                 </template>
                 <template v-slot:expand="expand">
@@ -198,6 +272,7 @@
 <script>
     import ApiService from '../services/api.service';
     import {mapActions} from "vuex";
+
     export default {
         name: "RoleManagement",
         data() {
@@ -206,10 +281,12 @@
                 newDialog: false,
                 editDialog: false,
                 addPermissionsDialog: false,
+                extendDialog: false,
                 pagination: {
                     sortBy: 'name'
                 },
                 selected: [],
+                selectedRoles: [],
                 newRole: {
                     name: '',
                     designation: ''
@@ -268,6 +345,20 @@
                         route: '',
                         type: ''
                     }
+                ],
+                extendableRoles: [
+                    {
+                        id: '',
+                        name: '',
+                        designation: '',
+                        extended: false
+                    }
+                ],
+                extendableRolesHeaders: [
+                    {text: 'Id', value: 'id'},
+                    {text: 'Name', value: 'name'},
+                    {text: 'Designation', value: 'designation'},
+                    {text: 'Action'}
                 ]
             }
         },
@@ -292,28 +383,15 @@
                 this.newDialog = false;
             },
             loadRoles: function () {
-                ApiService.get('http://localhost:8101/api/roles').then(response => (this.roles = response.data));
+                ApiService.get('http://localhost:8101/api/roles').then(response => this.roles = response.data);
             },
             deleteItem(item) {
                 confirm('Are you sure you want to delete this item?') &&
                 ApiService.delete('http://localhost:8101/api/role?id=' + item.id)
-                    .then(response =>  {
+                    .then(response => {
                         this.loadRoles();
                     }).catch(error => {
-                    if (error.response) {
-                        // The request was made and the server responded with a status code
-                        // that falls out of the range of 2xx
                         this.handleError({errorMsg: error.response.data})
-                    }
-                    // else if (error.request) {
-                    //     // The request was made but no response was received
-                    //     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                    //     // http.ClientRequest in node.js
-                    //     console.log(error.request);
-                    // } else {
-                    //     // Something happened in setting up the request that triggered an Error
-                    //     console.log('Error', error.message);
-                    // }
                 });
             },
             openEditDialog(item) {
@@ -371,6 +449,14 @@
                 ApiService.post('http://localhost:8101/api/role/permission', data);
                 this.addPermissionsDialogCancel();
                 this.loadRoles();
+            },
+            openExtendDialog(item){
+                ApiService.get('http://localhost:8101/api/role/extend?roleDesignation=' + item.designation).then(response => (this.extendableRoles = response.data));
+                this.extendDialog = true;
+            },
+            extendRoleCancel(){
+                this.extendDialog = true;
+                this.extendableRoles = []
             }
         },
         created() {

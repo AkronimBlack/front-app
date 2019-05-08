@@ -12,7 +12,7 @@
             </v-card-title>
 
             <v-card-text>
-                {{errorMsg}}}
+                {{errorMsg}}
             </v-card-text>
 
             <v-divider></v-divider>
