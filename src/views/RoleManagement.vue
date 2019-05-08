@@ -454,7 +454,7 @@
                 this.extendDialog = true;
             },
             extendRoleCancel(){
-                this.extendDialog = true;
+                this.extendDialog = false;
                 this.extendableRoles = []
             }
         },
