@@ -154,7 +154,7 @@
                                                         :indeterminate="props.indeterminate"
                                                         primary
                                                         hide-details
-                                                        @click.stop="toggleAll"
+                                                        @click.stop="toggleAllRolesForExtend"
                                                 ></v-checkbox>
                                             </th>
                                             <th
@@ -177,9 +177,9 @@
                                                         hide-details
                                                 ></v-checkbox>
                                             </td>
+                                            <td>{{ props.item.id }}</td>
                                             <td>{{ props.item.name }}</td>
-                                            <td class="text-xs-center">{{ props.item.route }}</td>
-                                            <td class="text-xs-center">{{ props.item.type }}</td>
+                                            <td class="text-xs-center">{{ props.item.designation }}</td>
                                         </tr>
                                     </template>
                                 </v-data-table>
@@ -435,7 +435,7 @@
                         }
                     }
                 );
-                this.selected = selected;
+                this.selectedRoles = selected;
             },
             addPermissionsDialogCancel() {
                 this.editRole.id = '';
@@ -450,12 +450,27 @@
                 this.loadRoles();
             },
             openExtendDialog(item){
-                ApiService.get('http://localhost:8101/api/role/extend?roleDesignation=' + item.designation).then(response => (this.extendableRoles = response.data));
+                ApiService.get('http://localhost:8101/api/role/extend?roleDesignation=' + item.designation).then(response => (this.setExtendedData(response.data)));
                 this.extendDialog = true;
+            },
+            setExtendedData(data) {
+                let selected = [];
+                data.forEach(function (item) {
+                        if (item.extends === true) {
+                            selected.push(item);
+                        }
+                    }
+                );
+                this.selectedRoles = selected;
+                this.extendableRoles = data;
             },
             extendRoleCancel(){
                 this.extendDialog = false;
                 this.extendableRoles = []
+            },
+            toggleAllRolesForExtend() {
+                if (this.selectedRoles.length) this.selectedRoles = []
+                else this.selectedRoles = this.extendableRoles.slice()
             }
         },
         created() {
