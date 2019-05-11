@@ -39,6 +39,8 @@
                     class="elevation-1"
                     :expand="expand"
                     item-key="name"
+                    :rows-per-page-items="rowsPerPageItems"
+                    :pagination.sync="pagination"
             >
                 <template v-slot:items="props">
                     <td class="text-xs-justify">{{ props.item.id }}</td>
@@ -84,6 +86,8 @@
                                 :headers="rolePermissionsHeaders"
                                 :items="rolePermissions"
                                 class="elevation-1"
+                                :rows-per-page-items="rowsPerPageItems"
+                                :pagination.sync="pagination"
                         >
                             <template v-slot:items="props">
                                 <td class="text-xs-justify">{{ props.item.name }}</td>
@@ -141,6 +145,7 @@
                                         v-model="selectedRoles"
                                         :headers="extendableRolesHeaders"
                                         :items="extendableRoles"
+                                        :rows-per-page-items="rowsPerPageItems"
                                         :pagination.sync="pagination"
                                         select-all
                                         item-key="name"
@@ -209,6 +214,7 @@
                                         v-model="selected"
                                         :headers="permissionListHeaders"
                                         :items="permissionList"
+                                        :rows-per-page-items="rowsPerPageItems"
                                         :pagination.sync="pagination"
                                         select-all
                                         item-key="name"
@@ -281,8 +287,10 @@
                 editDialog: false,
                 addPermissionsDialog: false,
                 extendDialog: false,
+                rowsPerPageItems: [10, 20, 30, 40],
                 pagination: {
-                    sortBy: 'name'
+                    sortBy: 'name',
+                    rowsPerPage: 20
                 },
                 selected: [],
                 selectedRoles: [],
@@ -358,7 +366,7 @@
                     {text: 'Name', value: 'name'},
                     {text: 'Designation', value: 'designation'},
                     {text: 'Action'}
-                ]
+                ],
             }
         },
         methods: {
@@ -367,6 +375,7 @@
             ]),
             getRolePermissions: function (designation, expended) {
                 if (expended) {
+                    this.rolePermissions = []
                     return false;
                 }
                 ApiService.get('http://localhost:8101/api/role/permissions?roleDesignation=' + designation).then(response => (this.rolePermissions = response.data));
