@@ -195,7 +195,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn color="blue darken-1" flat @click="extendRoleCancel">Cancel</v-btn>
-                        <v-btn color="blue darken-1" flat @click="editItem">Save</v-btn>
+                        <v-btn color="blue darken-1" flat @click="saveExtendedRoles">Save</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -459,6 +459,7 @@
                 this.loadRoles();
             },
             openExtendDialog(item){
+                this.editRole = item;
                 ApiService.get('http://localhost:8101/api/role/extend?roleDesignation=' + item.designation).then(response => (this.setExtendedData(response.data)));
                 this.extendDialog = true;
             },
@@ -474,12 +475,26 @@
                 this.extendableRoles = data;
             },
             extendRoleCancel(){
+                this.editRole.id = '';
+                this.editRole.name = '';
+                this.editRole.designation = '';
                 this.extendDialog = false;
                 this.extendableRoles = []
             },
             toggleAllRolesForExtend() {
                 if (this.selectedRoles.length) this.selectedRoles = []
                 else this.selectedRoles = this.extendableRoles.slice()
+            },
+            saveExtendedRoles() {
+                let data = {'roleToExtend': this.editRole.designation, 'rolesBeingExtended': this.selectedRoles};
+                ApiService.put('http://localhost:8101/api/role/extend', data);
+                this.selectedRoles = [];
+                this.editRole.id = '';
+                this.editRole.name = '';
+                this.editRole.designation = '';
+                this.extendDialog = false;
+                this.extendableRoles = [];
+                this.loadRoles();
             }
         },
         created() {

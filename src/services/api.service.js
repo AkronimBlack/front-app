@@ -16,10 +16,6 @@ const ApiService = {
         axios.defaults.headers.common = {}
     },
 
-    // get(resource) {
-    //     return axios.get(resource)
-    // },
-
     get(url) {
         return new Promise((resolve, reject) => {
             axios.get(url)
@@ -32,14 +28,28 @@ const ApiService = {
         });
     },
 
-    post(resource, data) {
-        return axios.post(resource, data)
+    post(url, data) {
+        return new Promise((resolve, reject) => {
+            axios.put(url , data)
+                .then(response => {
+                    resolve(response);
+                })
+                .catch(error => {
+                    store.dispatch('handleError' , {errorMsg: error.response.data})
+                });
+        });
     },
-
-    put(resource, data) {
-        return axios.put(resource, data)
+    put(url , data) {
+        return new Promise((resolve, reject) => {
+            axios.put(url , data)
+                .then(response => {
+                    resolve(response);
+                })
+                .catch(error => {
+                    store.dispatch('handleError' , {errorMsg: error.response.data})
+                });
+        });
     },
-
     delete(resource) {
         return axios.delete(resource)
     },
