@@ -92,6 +92,10 @@
 
 
         <v-content>
+            <sys-notice v-for="notice in sysNotices"
+                     v-bind:key="notice.id"
+                     v-bind:text="notice.text"
+            ></sys-notice>
             <router-view></router-view>
         </v-content>
         <v-btn
@@ -172,7 +176,9 @@
 </template>
 
 <script>
+    import SysNotice from "./components/sysNotice";
     export default {
+        components: {SysNotice},
         data: () => ({
             dialog: false,
             drawer: null,
@@ -183,8 +189,17 @@
                 {icon: 'settings', text: 'Settings', link: '/settings'},
                 {icon: 'desktop_access_disabled', text: 'Roles', link: '/roles'},
                 {icon: 'help', text: 'Help', link: '/help'},
-            ]
+            ],
+            sysNotices: []
         }),
-        props: {}
+        props: {},
+        created() {
+            this.sockets.subscribe('sys.notice', (data) => {
+                this.sysNotices.push({'text':data})
+            });
+            this.sockets.subscribe('offer', (data) => {
+                this.sysNotices.push({'text':data})
+            });
+        }
     }
 </script>
